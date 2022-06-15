@@ -89,6 +89,7 @@ return(max(sort(vec)))
 CS_CNAE_conv <- function(vec){
   vec <- as.character(stringr::str_extract(pattern = "^[:digit:][:digit:]?", string = vec))
   vec <- cnae_vec[vec]
+  vec <- vec[!is.na(vec)]
   return(vec)
 }
 #'
@@ -103,7 +104,7 @@ CS_CNAE_conv <- function(vec){
 #'
 #' @export
 CS_get_CNAE <- function(vec){
-  vec <- str_extract(string = vec, pattern = "\\(([[:digit:]]+)\\)") %>%
+  vec <- stringr::str_extract(string = vec, pattern = "\\(([[:digit:]]+)\\)") %>%
     gsub(pattern = "[[:punct:]]", replacement = "", x = .)
   return(vec)
 }
@@ -150,7 +151,7 @@ CS_get_total_ksoc <- function(vec){
 #'
 #' @export
 CS_get_bus_states <- function(vec){
-vec <- str_extract(pattern = "AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO", string = vec)
+vec <- stringr::str_extract(pattern = "AC|AL|AM|AP|BA|CE|DF|ES|GO|MA|MG|MS|MT|PA|PB|PE|PI|PR|RJ|RN|RO|RR|RS|SC|SE|SP|TO", string = vec)
 vec <- vec[!is.na(vec)]
 return(vec)
 }
@@ -180,9 +181,9 @@ CS_convert_state_to_region <- function(vec){
 #' CS_get_bus_CEP(df$Endereço)
 #'
 CS_get_bus_CEP <- function(vec){
-  vec <- unlist(str_extract_all(vec, "([[:digit:]]+?)-([[:digit:]]+)"))
+  vec <- unlist(stringr::str_extract_all(vec, "([[:digit:]]+?)-([[:digit:]]+)"))
   vec <- gsub(pattern = "[[:punct:]]", replacement = "", x = vec)
-  vec <- vec[which(str_length(vec) > 7)]
+  vec <- vec[which(stringr::str_length(vec) > 7)]
   return(vec)
 }
 #'
@@ -198,7 +199,7 @@ CS_get_bus_CEP <- function(vec){
 CS_convert_CEP_into_city_state <- function(cep_string){
   vec <- rvest::read_html(paste0("https://cepdarua.net/cep/", cep_string)) %>% html_nodes(".u-text-left") %>%
     html_text()
-  vec <- vec[grep(pattern = " / ", x = vec)] %>% gsub("\n|  ", "", .) %>% str_split(string = ., pattern = " / ") %>% unlist()
+  vec <- vec[grep(pattern = " / ", x = vec)] %>% gsub("\n|  ", "", .) %>% stringr::str_split(string = ., pattern = " / ") %>% unlist()
   names(vec) <- c("Cidade", "Estado")
   return(vec)
 }

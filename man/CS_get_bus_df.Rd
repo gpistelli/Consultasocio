@@ -4,7 +4,7 @@
 \alias{CS_get_bus_df}
 \title{Get businesses data.frame}
 \usage{
-CS_get_bus_df(path, cpf = NULL)
+CS_get_bus_df(path, cpf = NA)
 }
 \arguments{
 \item{path}{A path that leads to a Consultasocio page}

@@ -24,7 +24,7 @@
 #'         )
 #'
 #' @export
-CS_get_bus_df <- function(path, cpf = NULL){
+CS_get_bus_df <- function(path, cpf = NA){
   busin <- rvest::read_html(path) %>%
     rvest::html_nodes(".cnpj p") %>% rvest::html_text()
 
@@ -38,13 +38,13 @@ CS_get_bus_df <- function(path, cpf = NULL){
       }
   }
 
-  if (!is.null(cpf)){
+  if (!is.na(cpf)){
     chos_cpf  <- logical(length(lista_empresas))
     for (i in 1:length(lista_empresas)){
       chos_cpf[i]  <- any(grepl(pattern = paste0("\\*\\*\\*", cpf, "\\*\\*"), x = lista_empresas[[i]]))
       }
     if (isFALSE(any(chos_cpf))){
-      print("This CPF was not found")
+      print(paste0(path, " CPF was not found"))
       return(NULL)
       }
     lista_empresas <- lista_empresas[chos_cpf]

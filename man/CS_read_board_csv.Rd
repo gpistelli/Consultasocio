@@ -10,7 +10,7 @@ CS_read_board_csv(csv_path)
 \item{csv_path}{A path that leads to a .csv file containing businessman links}
 }
 \value{
-A character vector with its businesses CNAEs
+A data.frame with the business owners summary data, organized with default values provided by Consultasocio
 }
 \description{
 Scrape, wrangle and organizes data from business owners pages
