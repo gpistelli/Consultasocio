@@ -162,7 +162,7 @@ CS_read_files_backup <- function(ent_name, period){
   backup_dir <- paste0(getwd(), "/data/", ent_name, "/", period, "/backup")
   backup_files <- list.files(backup_dir)
 
-  a <- read.csv(paste0(getwd(), "/data/", ent_name, "/", period, "/diretores.csv"), colClasses = rep("character", 5))
+  a <- read.csv(paste0(getwd(), "/data/", ent_name, "/", period, "/diretores.csv"), colClasses = rep("character", 6))
 
   links <- unlist(x = strsplit(x = a$Link, split = ","))
   links <- links[!is.na(links)]

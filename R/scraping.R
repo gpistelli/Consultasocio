@@ -24,11 +24,16 @@
 #'         )
 #'
 #' @export
-CS_get_bus_df <- function(path, cpf = NA){
+CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
   busin <- rvest::read_html(path) %>%
     rvest::html_nodes(".cnpj p") %>% rvest::html_text()
 
   pos <- grep("CPF/CNPJ: \\*\\*\\*", busin)
+
+  if (length(pos) < 1){
+    print(paste0(path, " is a blank page"))
+    return(NA)
+  }
 
   lista_empresas <- list()
   for (i in 1:length(pos)){
@@ -74,6 +79,10 @@ CS_get_bus_df <- function(path, cpf = NA){
   names(empresas_df)[grep("Data de entrada", names(empresas_df))] <- "Data de entrada"
   names(empresas_df) <- gsub(" ", ".", x = trimws(names(empresas_df)))
   empresas_df[1:ncol(empresas_df)] <- lapply(X = empresas_df[1:ncol(empresas_df)], FUN = trimws)
+
+  if (only_bus){
+  empresas_df <- dplyr::filter(empresas_df, Natureza.jurídica != "Associação Privada (3999).")
+  }
 
   return(empresas_df)
 }
