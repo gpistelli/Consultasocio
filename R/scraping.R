@@ -43,7 +43,7 @@ CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
       }
   }
 
-  if (!is.na(cpf)){
+  if (!is.na(cpf) && stringr::str_length(cpf) > 1){
     chos_cpf  <- logical(length(lista_empresas))
     for (i in 1:length(lista_empresas)){
       chos_cpf[i]  <- any(grepl(pattern = paste0("\\*\\*\\*", cpf, "\\*\\*"), x = lista_empresas[[i]]))

@@ -114,8 +114,8 @@ CS_read_board_csv <- function(csv_path){
   diretores_df[c("Agr", "Extr", "Transf", "Infra", "Constr", "Comerc", "Serv", "Sudeste", "Centro-Oeste", "Nordeste", "Norte", "Sul")] <- lapply(X = diretores_df[c("Agr", "Extr", "Transf", "Infra", "Constr", "Comerc", "Serv", "Sudeste", "Centro-Oeste", "Nordeste", "Norte", "Sul")], FUN = as.factor)
 
   diretores_df$Maior_n_Func <- factor(x = diretores_df$Maior_n_Func,
-                                      levels = 1:6,
-                                      labels = c("Até 19 Func", "10-49 Func",
+                                      levels = 1:7,
+                                      labels = c("Até 9 Func", "Até 19 Func", "10-49 Func",
                                                  "20-99 Func", "50-199 Func",
                                                  "100-199 Func", "Mais de 200 Func")
   )
@@ -192,8 +192,8 @@ CS_read_files_backup <- function(ent_name, period){
   diretores_df[c("Agr", "Extr", "Transf", "Infra", "Constr", "Comerc", "Serv", "Sudeste", "Centro-Oeste", "Nordeste", "Norte", "Sul")] <- lapply(X = diretores_df[c("Agr", "Extr", "Transf", "Infra", "Constr", "Comerc", "Serv", "Sudeste", "Centro-Oeste", "Nordeste", "Norte", "Sul")], FUN = as.factor)
 
   diretores_df$Maior_n_Func <- factor(x = diretores_df$Maior_n_Func,
-                                      levels = 1:6,
-                                      labels = c("Até 19 Func", "10-49 Func",
+                                      levels = 1:7,
+                                      labels = c("Até 9 Func", "Até 19 Func", "10-49 Func",
                                                  "20-99 Func", "50-199 Func",
                                                  "100-199 Func", "Mais de 200 Func")
   )

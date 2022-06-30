@@ -47,11 +47,11 @@ return(max(sort(vec)))
 #' @export
 CS_get_big_n_employees <- function(vec){
 vec <- as.numeric(factor(x = vec,
-                         levels = c("Ate 19 Funcionarios (Me).", "Entre 10 E 49 Funcionarios (Epp).",
+                         levels = c("Ate 9 Funcionarios (Me).", "Ate 19 Funcionarios (Me).", "Entre 10 E 49 Funcionarios (Epp).",
                                     "Entre 20 E 99 Funcionarios (Epp).", "Entre 50 E 199 Funcionarios (Media).",
                                     "Entre 100 E 199 Funcionarios (Media).", "Acima De 200 Funcionarios (Grande)."
                                     ),
-                         labels = c(1:6)
+                         labels = c(1:7)
                          )
                 )
 return(max(sort(vec)))
