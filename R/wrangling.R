@@ -5,11 +5,15 @@
 #' @param vec A vector with businesses statuses, preferably collected from CS_get_bus_df
 #' @return An integer
 #' @examples
-#' CS_count_active_bus(df$Situação.Cadastral)
+#' CS_count_active_bus(df$Situaçao.Cadastral)
 #'
 #' @export
-CS_count_active_bus <- function(vec){
-  return(length(which(vec == "ATIVA.")))
+CS_count_active_bus <- function(vec, only_active = F){
+  if (only_active){
+    return(length(which(vec == "ATIVA.")))
+  } else {
+    return(length(vec))
+  }
 }
 #'
 #' Get biggest income from businesses
@@ -27,7 +31,7 @@ vec <- as.numeric(factor(x = vec,
                          levels = c("Até R$240.000,00.", "De R$240.000,00 a R$2.400.000,00.",
                                     "De R$2.400.000,00 a R$5.000.000,00.", "De R$5.000.000,00 a R$10.000.000,00.",
                                     "De R$10.000.000,00 a R$30.000.000,00.", "De R$30.000.000,00 a R$50.000.000,00.",
-                                    "De R$50.000.000,00 a R$100.000.000,00.", "Mais de R$100.000.000,00."
+                                    "De R$50.000.000,00 a R$100.000.000,00.", "Acima de  R$100.000.000,00."
                                     ),
                          labels = c(1:8)
                          )
@@ -42,7 +46,7 @@ return(max(sort(vec)))
 #' @param vec A vector with businesses incomes preferably collected from CS_get_bus_df
 #' @return An integer, following our dictionary
 #' @examples
-#' CS_get_big_n_employees(df$Número.de.funcionários)
+#' CS_get_big_n_employees(df$Numero.de.funcionarios)
 #'
 #' @export
 CS_get_big_n_employees <- function(vec){
@@ -64,7 +68,8 @@ return(max(sort(vec)))
 #' @param vec A vector with businesses sizes preferably collected from CS_get_bus_df
 #' @return An integer, following our dictionary
 #' @examples
-#' CS_get_big_size(df$Número.de.funcionários)
+#' CS_get_big_size(df$Numero.de.funcionarios)
+#' @encoding UTF-8
 #'
 #' @export
 CS_get_big_size <- function(vec){
@@ -83,7 +88,7 @@ return(max(sort(vec)))
 #' @param vec A vector with businesses CNAEs, preferably collected from CS_get_bus_df
 #' @return A named vector with CNAEs sector and character values indicating `yes` or `no`
 #' @examples
-#' CS_CNAE_conv(CS_get_CNAE(df$Atividade.econômica))
+#' CS_CNAE_conv(CS_get_CNAE(df$Atividade.economica))
 #'
 #' @export
 CS_CNAE_conv <- function(vec){
@@ -100,7 +105,7 @@ CS_CNAE_conv <- function(vec){
 #' @param vec A vector with businesses CNAEs, preferably collected from CS_get_bus_df
 #' @return A character vector with its businesses CNAEs
 #' @examples
-#' CS_get_CNAE(df$Atividade.econômica)
+#' CS_get_CNAE(df$Atividade.economica)
 #'
 #' @export
 CS_get_CNAE <- function(vec){
@@ -116,7 +121,7 @@ CS_get_CNAE <- function(vec){
 #' @param vec A vector with businesses CNAEs, preferably collected from CS_get_bus_df
 #' @return A named vector with CNAEs sector and character values indicating `yes` or `no`
 #' @examples
-#' CS_CNAE_conv(CS_get_CNAE(df$Atividade.econômica))
+#' CS_CNAE_conv(CS_get_CNAE(df$Atividade.economica))
 #'
 #' @export
 CS_convert_mon_to_num <- function(vec){
@@ -194,11 +199,11 @@ CS_get_bus_CEP <- function(vec){
 #' @param vec A vector CEPs extracted from
 #' @return A named vector with city and state
 #' @examples
-#' CS_convert_CEP_into_city_state(CS_get_bus_CEP(df$Endereço))
+#' CS_convert_CEP_into_city_state(CS_get_bus_CEP(df$Endereco))
 #'
 CS_convert_CEP_into_city_state <- function(cep_string){
-  vec <- rvest::read_html(paste0("https://cepdarua.net/cep/", cep_string)) %>% html_nodes(".u-text-left") %>%
-    html_text()
+  vec <- rvest::read_html(paste0("https://cepdarua.net/cep/", cep_string)) %>% rvest::html_nodes(".u-text-left") %>%
+    rvest::html_text()
   vec <- vec[grep(pattern = " / ", x = vec)] %>% gsub("\n|  ", "", .) %>% stringr::str_split(string = ., pattern = " / ") %>% unlist()
   names(vec) <- c("Cidade", "Estado")
   return(vec)

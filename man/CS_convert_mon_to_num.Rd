@@ -16,6 +16,6 @@ A named vector with CNAEs sector and character values indicating `yes` or `no`
 Convert the business CNAE to our dictionary (check `cnae_vec` object)
 }
 \examples{
-CS_CNAE_conv(CS_get_CNAE(df$Atividade.econômica))
+CS_CNAE_conv(CS_get_CNAE(df$Atividade.economica))
 
 }

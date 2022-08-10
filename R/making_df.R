@@ -13,7 +13,7 @@
 #'
 #' @export
 CS_prep_matrix <- function(vec){
-  vec <- setNames(object = rep("y", length(vec)), nm = vec)
+  vec <- stats::setNames(object = rep("y", length(vec)), nm = vec)
   return(vec)
 }
 #'
@@ -26,6 +26,7 @@ CS_prep_matrix <- function(vec){
 #' @return A named character vector with a summary data
 #' @examples
 #' CS_get_summary_vec_reg(Skaf_bus_df)
+#' @encoding UTF-8
 #'
 #' @export
 CS_get_summary_vec_reg <- function(df){
@@ -76,7 +77,7 @@ CS_get_summary_df <- function(vec_list){
 #' @importFrom dplyr bind_rows
 #' @export
 CS_read_board_csv <- function(csv_path){
-  diretores <- read.csv(csv_path, colClasses = rep("character", 5), fileEncoding = "utf8")
+  diretores <- utils::read.csv(csv_path, colClasses = rep("character", 6), fileEncoding = "utf8")
 
   diretores_links <- strsplit(x = diretores$Link, split = ",")
   # names(diretores_links) <- diretores$Diretor
@@ -162,7 +163,7 @@ CS_read_files_backup <- function(ent_name, period){
   backup_dir <- paste0(getwd(), "/data/", ent_name, "/", period, "/backup")
   backup_files <- list.files(backup_dir)
 
-  a <- read.csv(paste0(getwd(), "/data/", ent_name, "/", period, "/diretores.csv"), colClasses = rep("character", 6))
+  a <- utils::read.csv(paste0(getwd(), "/data/", ent_name, "/", period, "/diretores.csv"), colClasses = rep("character", 6))
 
   links <- unlist(x = strsplit(x = a$Link, split = ","))
   links <- links[!is.na(links)]
@@ -204,17 +205,18 @@ CS_read_files_backup <- function(ent_name, period){
                                               "De 10 a 30M Fat", "De 30 a 50M Fat", "De 50 a 100M Fat", "Mais de 100M Fat")
   )
 
-  diretores_df$N_Emp <- cut(x = as.numeric(diretores_df$N_Emp), breaks = c(-1, 1, 5, Inf),
-                            labels = c("Até 1 Emp", "2 a 5 Emp", "Mais de 5 Emp")
+  diretores_df$N_Emp <- cut(x = as.numeric(diretores_df$N_Emp), breaks = c(-1, 1, 5, 10, Inf),
+                            labels = c("Até 1 Emp", "2 a 5 Emp", "5 a 10 Emp", "Mais de 10 Emp")
   )
 
   diretores_df$KSoc <- cut(x = as.numeric(diretores_df$KSoc),
-                           breaks = c(0, 100000, 1000000, 10000000, Inf),
-                           labels = c("Até 100k KSoc", "100k a 1M KSoc", "1M a 10M KSoc", "Mais de 10M KSoc")
+                           breaks = c(0, 100000, 1000000, 10000000, 100000000, Inf),
+                           labels = c("Até 100k KSoc", "100k a 1M KSoc", "1M a 10M KSoc", "10M a 100M KSoc", "Mais de 100M KSoc")
   )
 
   diretores_df <- as.data.frame(diretores_df)
   diretores_df$Entidade <- rep(x = ent_name, times = nrow(diretores_df))
+  row.names(diretores_df) <- paste0(diretores_df$Entidade, 1:nrow(diretores_df))
 
   return(diretores_df)
 

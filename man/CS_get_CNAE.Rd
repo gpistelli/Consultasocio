@@ -16,6 +16,6 @@ A character vector with its businesses CNAEs
 Extract CNAE codes from businesses
 }
 \examples{
-CS_get_CNAE(df$Atividade.econômica)
+CS_get_CNAE(df$Atividade.economica)
 
 }

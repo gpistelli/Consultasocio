@@ -16,6 +16,6 @@ A named vector with city and state
 Convert a CEP into a vector with city and state through a check in cepdarua.net
 }
 \examples{
-CS_convert_CEP_into_city_state(CS_get_bus_CEP(df$Endereço))
+CS_convert_CEP_into_city_state(CS_get_bus_CEP(df$Endereco))
 
 }

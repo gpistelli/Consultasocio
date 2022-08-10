@@ -22,13 +22,13 @@
 #'                           cpf = "083628"
 #'                           )
 #'         )
-#'
+#' @encoding UTF-8
 #' @export
 CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
   busin <- rvest::read_html(path) %>%
     rvest::html_nodes(".cnpj p") %>% rvest::html_text()
 
-  pos <- grep("CPF/CNPJ: \\*\\*\\*", busin)
+  pos <- grep("CPF/CNPJ:", busin)
 
   if (length(pos) < 1){
     print(paste0(path, " is a blank page"))
@@ -43,7 +43,7 @@ CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
       }
   }
 
-  if (!is.na(cpf) && stringr::str_length(cpf) > 1){
+  if (!is.na(cpf) && stringr::str_length(cpf) > 2){
     chos_cpf  <- logical(length(lista_empresas))
     for (i in 1:length(lista_empresas)){
       chos_cpf[i]  <- any(grepl(pattern = paste0("\\*\\*\\*", cpf, "\\*\\*"), x = lista_empresas[[i]]))
@@ -67,7 +67,7 @@ CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
     values_vector <- character()
 
     for (j in 1:length(lista_empresas[[i]])){
-      value <- setNames(object = lista_empresas[[i]][[j]][2], nm = lista_empresas[[i]][[j]][1])
+      value <- stats::setNames(object = lista_empresas[[i]][[j]][2], nm = lista_empresas[[i]][[j]][1])
       values_vector <- c(values_vector, value)
     }
 
@@ -85,4 +85,41 @@ CS_get_bus_df <- function(path, cpf = NA, only_bus = T){
   }
 
   return(empresas_df)
+}
+#' Save Consultasocio links
+#'
+#' @description
+#' Archive your links directly with SPN2 API
+#'
+#' @details
+#' Still in development, we're trying to improve it. It is basically a code forcing to store your link, so it could take a while.
+#' To use that function, you're going to need to create an account in web.archive.org and then request a key for their API.
+#' For a better introduction to how to use this API, check their [documentation](https://docs.google.com/document/d/1Nsv52MvSjbLb2PCpHlat0gkzw0EvtSgpKHu4mk0MnrA/view).
+#'
+#' @param link A link to a consultasocio page that you want to save
+#' @param WArch_aut A string containing your Authorization data. To see how to write it, check our example
+#' @return A character string containing a web.archive link
+#' @examples
+#' CS_WArch_store_page("https://www.consultasocio.com/q/sa/arthur-moledo-do-val", "YOUR_KEY <YOUR_SECRET>")
+#'
+#' @export
+WArch_store_page <- function(link, WArch_auth){
+  save_link <- paste0("https://web.archive.org/save/", link)
+  WArch_url <- paste0("https://web.archive.org/save/", link)
+
+  while(WArch_url == save_link){
+    WArch_url <- httr::GET(url = save_link,
+                     add_headers(Authorization=WArch_auth,
+                                 capture_outlinks = 0,
+                                 capture_screenshot = 0,
+                                 js_behavior_timeout = 0)
+    )
+    WArch_url <- WArch_url$url
+
+    Sys.sleep(3)
+  }
+
+  print(paste0(link, " was stored as ", WArch_url))
+
+  return(WArch_url)
 }
