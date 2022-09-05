@@ -3,6 +3,7 @@
 #' Counts how many active businesses there is in a business owner data.frame
 #'
 #' @param vec A vector with businesses statuses, preferably collected from CS_get_bus_df
+#' @param only_active Boolean value, to define whether to count or not only active businesses
 #' @return An integer
 #' @examples
 #' CS_count_active_bus(df$Situaçao.Cadastral)

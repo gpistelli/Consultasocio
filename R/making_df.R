@@ -23,14 +23,15 @@ CS_prep_matrix <- function(vec){
 #' Builds a summary vector from a business owner data.frame, to be bound with many other business owners data
 #'
 #' @param df A business owner page data.frame
+#' @param active_bus A boolean, choosing to count only active businesses or not
 #' @return A named character vector with a summary data
 #' @examples
 #' CS_get_summary_vec_reg(Skaf_bus_df)
 #' @encoding UTF-8
 #'
 #' @export
-CS_get_summary_vec_reg <- function(df){
-  vec <- c(N_Emp = CS_count_active_bus(df$Situação.Cadastral),
+CS_get_summary_vec_reg <- function(df, active_bus = F){
+  vec <- c(N_Emp = CS_count_active_bus(df$Situação.Cadastral, only_active = active_bus),
            Maior_n_Func = CS_get_big_n_employees(df$Número.de.funcionários),
            Maior_Fat = CS_get_big_income(df$Faturamento),
            KSoc = CS_get_total_ksoc(unique(df$Capital.social)),
@@ -70,13 +71,31 @@ CS_get_summary_df <- function(vec_list){
 #' It already automatizes some processes, like CPF selection and multiple pages.
 #'
 #' @param csv_path A path that leads to a .csv file containing businessman links
+#' @param only_bus Boolean value, to define whether to count or not foundations and associations
+#' @param active_bus Boolean value, to define whether to count or not only active businesses
+#' @param Maior_n_Func_labels Character vector, length 7, to define categories
+#' @param Maior_Fat_labels Character vector, length 8, to define categories
+#' @param N_Emp_breaks Numeric vector, cuts to define numbers of businesses owned categories
+#' @param N_Emp_labels Character vector, to define categories from cuts defined by user
+#' @param KSoc_breaks Numeric vector, cuts to define numbers of share capital categories
+#' @param KSoc_labels Character vector, to define categories from cuts defined by user
 #' @return A data.frame with the business owners summary data, organized with default values provided by Consultasocio
 #' @examples
 #' CS_read_board_csv("diretores.csv")
 #'
 #' @importFrom dplyr bind_rows
 #' @export
-CS_read_board_csv <- function(csv_path){
+CS_read_board_csv <- function(csv_path, only_bus = T, active_bus = F,
+                              Maior_n_Func_labels = c("Até 9 Func", "Até 19 Func", "10-49 Func", "20-99 Func", "50-199 Func",
+                                                      "100-199 Func", "Mais de 200 Func"),
+                              Maior_Fat_labels = c("Até 240k Fat", "Até 2,4M Fat", "De 2,4 a 5M Fat", "De 5 a 10M Fat",
+                                                   "De 10 a 30M Fat", "De 30 a 50M Fat", "De 50 a 100M Fat", "Mais de 100M Fat"),
+                              N_Emp_breaks = c(-1, 1, 5, 10, Inf),
+                              N_Emp_labels =  c("Até 1 Emp", "2 a 5 Emp", "6 a 10 Emp", "Mais de 10 Emp"),
+                              KSoc_breaks = c(0, 100000, 1000000, 10000000, 100000000, Inf),
+                              KSoc_labels = c("Até 100k KSoc", "100k a 1M KSoc", "1M a 10M KSoc", "10M a 100M KSoc", "Mais de 100M KSoc")
+                              ){
+
   diretores <- utils::read.csv(csv_path, colClasses = rep("character", 6), fileEncoding = "utf8")
 
   diretores_links <- strsplit(x = diretores$Link, split = ",")
@@ -87,15 +106,17 @@ CS_read_board_csv <- function(csv_path){
   for (i in 1:length(diretores_links)){
     if (is.na(diretores$CPF[i])){
       if (length(diretores_links[[i]]) > 1){
-        diretores_df_list[[i]]  <- lapply(X = diretores_links[[i]], FUN = CS_get_bus_df) %>% do.call(what = bind_rows, args = .)
+        diretores_df_list[[i]]  <- lapply(X = diretores_links[[i]], FUN = CS_get_bus_df, only_bus = only_bus) %>%
+            do.call(what = bind_rows, args = .)
       } else {
-        diretores_df_list[[i]] <- CS_get_bus_df(path = diretores_links[[i]])
+        diretores_df_list[[i]] <- CS_get_bus_df(path = diretores_links[[i]], only_bus = only_bus)
       }
     } else {
       if (length(diretores_links[[i]]) > 1){
-        diretores_df_list[[i]]  <- lapply(X = diretores_links[[i]], FUN = CS_get_bus_df, cpf = diretores$CPF[i]) %>% do.call(what = bind_rows, args = .)
+        diretores_df_list[[i]]  <- lapply(X = diretores_links[[i]], FUN = CS_get_bus_df,
+                                          only_bus = only_bus, cpf = diretores$CPF[i]) %>% do.call(what = bind_rows, args = .)
       } else {
-        diretores_df_list[[i]] <- CS_get_bus_df(path = diretores_links[[i]], cpf = diretores$CPF[i])
+        diretores_df_list[[i]] <- CS_get_bus_df(path = diretores_links[[i]], only_bus = only_bus, cpf = diretores$CPF[i])
       }
     }
   }
@@ -104,7 +125,7 @@ CS_read_board_csv <- function(csv_path){
   #   names(diretores_df_list[[i]]) <- gsub(pattern = " ", replacement = ".", x = trimws(names(diretores_df_list[[i]])))
   # }
 
-  diretores_df <- lapply(FUN = CS_get_summary_vec_reg, X =  diretores_df_list)
+  diretores_df <- lapply(FUN = CS_get_summary_vec_reg, X = diretores_df_list, active_bus = active_bus)
   diretores_df[[length(diretores_df)+1]] <- base_df_reg
 
   diretores_df <- do.call(what = bind_rows, args = diretores_df)
@@ -116,24 +137,21 @@ CS_read_board_csv <- function(csv_path){
 
   diretores_df$Maior_n_Func <- factor(x = diretores_df$Maior_n_Func,
                                       levels = 1:7,
-                                      labels = c("Até 9 Func", "Até 19 Func", "10-49 Func",
-                                                 "20-99 Func", "50-199 Func",
-                                                 "100-199 Func", "Mais de 200 Func")
+                                      labels = Maior_n_Func_labels
   )
 
   diretores_df$Maior_Fat <- factor(x = diretores_df$Maior_Fat,
                                    levels = 1:8,
-                                   labels = c("Até 240k Fat", "Até 2,4M Fat", "De 2,4 a 5M Fat", "De 5 a 10M Fat",
-                                              "De 10 a 30M Fat", "De 30 a 50M Fat", "De 50 a 100M Fat", "Mais de 100M Fat")
+                                   labels = Maior_Fat_labels
   )
 
-  diretores_df$N_Emp <- cut(x = as.numeric(diretores_df$N_Emp), breaks = c(-1, 1, 5, Inf),
-                            labels = c("Até 1 Emp", "2 a 5 Emp", "Mais de 5 Emp")
+  diretores_df$N_Emp <- cut(x = as.numeric(diretores_df$N_Emp), breaks = N_Emp_breaks,
+                            labels = N_Emp_labels
   )
 
   diretores_df$KSoc <- cut(x = as.numeric(diretores_df$KSoc),
-                           breaks = c(0, 100000, 1000000, 10000000, Inf),
-                           labels = c("Até 100k KSoc", "100k a 1M KSoc", "1M a 10M KSoc", "Mais de 10M KSoc")
+                           breaks = KSoc_breaks,
+                           labels = KSoc_labels
   )
 
   diretores_df <- as.data.frame(diretores_df)
@@ -206,7 +224,7 @@ CS_read_files_backup <- function(ent_name, period){
   )
 
   diretores_df$N_Emp <- cut(x = as.numeric(diretores_df$N_Emp), breaks = c(-1, 1, 5, 10, Inf),
-                            labels = c("Até 1 Emp", "2 a 5 Emp", "5 a 10 Emp", "Mais de 10 Emp")
+                            labels = c("Até 1 Emp", "2 a 5 Emp", "6 a 10 Emp", "Mais de 10 Emp")
   )
 
   diretores_df$KSoc <- cut(x = as.numeric(diretores_df$KSoc),
