@@ -26,8 +26,6 @@ You can find a basic introduction to what our package offers right now in our pr
 
 For a more methodological debate and introduction, check our research paper in ST07 - 46º ANPOCS: [Mapeando a composição econômica de entidades empresariais: proposição de um método espacial](https://www.encontro2022.anpocs.com/atividade/view?q=YToyOntzOjY6InBhcmFtcyI7czozNjoiYToxOntzOjEyOiJJRF9BVElWSURBREUiO3M6MzoiMTM0Ijt9IjtzOjE6ImgiO3M6MzI6ImE1NDM1YjRjYzcyZmMyMDNkMjk2ODhiNDI2NzRlNTJlIjt9&ID_ATIVIDADE=134).
 
-If you want to look further at our research using these methodologies and its stages, check our [Open Science Project](https://osf.io/g3dmz/).
-
 ## Thanks
 
 This package was developed partially, as original source code, during our Master Thesis research, which was funded by CAPES Masters scolarship.
@@ -36,3 +34,15 @@ As our acknowledgement of this funding, this code was made public and open-sourc
 
 ## References
 
+CONSULTASOCIO. Disponível em: <https://www.consultasocio.com>
+
+KASSAMBARA, Alboukadel; MUNDT, Fabian Mundt. factoextra: Extract and Visualize the Results of Multivariate Data Analyses. R package version 1.0.7. 2020. Disponível em:
+<https://CRAN.Rproject.org/package=factoextra>.
+
+LE, Sebastien; JOSSE, Julie; HUSSON, Francois. FactoMineR: An R Package for Multivariate Analysis. Journal of Statistical Software, 25(1), 2008.
+
+WAYBACK MACHINE. Disponível em: <https://web.archive.org/>
+
+WICKHAM, Hadley. rvest: Easily Harvest (Scrape) Web Pages. R package version 0.3.6. 2020. Disponível em: <https://CRAN.R-project.org/package=rvest>.
+
+_____; et al. Welcome to the tidyverse. Journal of Open Source Software, 4(43), 1686, 2019.
