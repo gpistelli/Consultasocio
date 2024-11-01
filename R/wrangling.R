@@ -92,10 +92,14 @@ return(max(sort(vec)))
 #' CS_CNAE_conv(CS_get_CNAE(df$Atividade.economica))
 #'
 #' @export
-CS_CNAE_conv <- function(vec){
+CS_CNAE_conv <- function(vec, skip_na = TRUE){
   vec <- as.character(stringr::str_extract(pattern = "^[:digit:][:digit:]?", string = vec))
   vec <- cnae_vec[vec]
+
+  if (skip_na){
   vec <- vec[!is.na(vec)]
+  }
+  
   return(vec)
 }
 #'
